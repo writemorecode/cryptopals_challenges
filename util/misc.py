@@ -36,7 +36,7 @@ def split_into_blocks(data, size: int = 16) -> list:
     Splits data into equally-sized blocks of size bytes
     E.g. "ABCD" -> ["AB","CD"] for size=2.
     """
-    return [data[i : i + size] for i in range(0, len(data) - size, size)]
+    return [data[i : i + size] for i in range(0, len(data), size)]
 
 
 def contains_duplicate(items) -> bool:
