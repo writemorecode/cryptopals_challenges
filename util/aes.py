@@ -7,14 +7,15 @@ from util import misc, xor
 
 BLOCK_SIZE = 16
 
-def pad_pkcs7(data: bytearray, block_size: int = 16) -> bytearray:
-    """ Adds PKCS#7 padding to data """
+
+def pad_pkcs7(data, block_size=BLOCK_SIZE):
+    """Adds PKCS#7 padding to data"""
     pad_value = block_size - (len(data) % block_size)
     padding = pad_value * pad_value.to_bytes(1, sys.byteorder)
     return data + padding
 
 
-def unpad_pkcs7(data: bytearray) -> bytearray:
+def unpad_pkcs7(data):
     """
     Strips PKCS#7 padding from data.
     Raises ValueError if padding is invalid.
@@ -31,8 +32,8 @@ def unpad_pkcs7(data: bytearray) -> bytearray:
     return unpadded
 
 
-def aes_128_ecb_encrypt(plaintext: bytes, key: bytes) -> bytes:
-    """ AES-128 encryption in ECB mode with PKCS-7 padding """
+def aes_128_ecb_encrypt(plaintext, key):
+    """AES-128 encryption in ECB mode with PKCS-7 padding"""
     backend = default_backend()
     cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
     encrypt = cipher.encryptor()
@@ -41,8 +42,8 @@ def aes_128_ecb_encrypt(plaintext: bytes, key: bytes) -> bytes:
     return ciphertext
 
 
-def aes_128_ecb_decrypt(ciphertext: bytes, key: bytes) -> bytes:
-    """ AES-128 decryption in ECB mode with PKCS-7 padding """
+def aes_128_ecb_decrypt(ciphertext, key):
+    """AES-128 decryption in ECB mode with PKCS-7 padding"""
     backend = default_backend()
     cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
     decrypt = cipher.decryptor()
@@ -51,7 +52,7 @@ def aes_128_ecb_decrypt(ciphertext: bytes, key: bytes) -> bytes:
     return plaintext
 
 
-def aes_128_encrypt(plaintext: bytes, key: bytes) -> bytes:
+def aes_128_encrypt(plaintext, key):
     """AES-128 encryption without padding."""
     backend = default_backend()
     cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
@@ -60,7 +61,7 @@ def aes_128_encrypt(plaintext: bytes, key: bytes) -> bytes:
     return ciphertext
 
 
-def aes_128_decrypt(ciphertext: bytes, key: bytes) -> bytes:
+def aes_128_decrypt(ciphertext, key):
     """AES-128 decryption without padding."""
     backend = default_backend()
     cipher = Cipher(algorithms.AES(key), modes.ECB(), backend=backend)
@@ -69,8 +70,8 @@ def aes_128_decrypt(ciphertext: bytes, key: bytes) -> bytes:
     return plaintext
 
 
-def aes_128_cbc_encrypt(plaintext: bytes, key: bytes, initial_vector: bytes) -> bytearray:
-    """ AES-128 encryption in CBC mode with PKCS-7 padding """
+def aes_128_cbc_encrypt(plaintext, key, initial_vector):
+    """AES-128 encryption in CBC mode with PKCS-7 padding"""
     ciphertext = bytearray()
     plaintext = pad_pkcs7(plaintext)
     plaintext_blocks = misc.split_into_blocks(plaintext)
@@ -82,8 +83,8 @@ def aes_128_cbc_encrypt(plaintext: bytes, key: bytes, initial_vector: bytes) -> 
     return ciphertext
 
 
-def aes_128_cbc_decrypt(ciphertext: bytes, key: bytes, initial_vector: bytes) -> bytearray:
-    """ AES-128 decryption in CBC mode with PKCS-7 padding """
+def aes_128_cbc_decrypt(ciphertext, key, initial_vector):
+    """AES-128 decryption in CBC mode"""
     plaintext = bytearray()
     prev = initial_vector
     ciphertext_blocks = misc.split_into_blocks(ciphertext)
@@ -92,15 +93,15 @@ def aes_128_cbc_decrypt(ciphertext: bytes, key: bytes, initial_vector: bytes) ->
         plaintext_block = xor.xor_bytes(intermediate_block, prev)
         plaintext += plaintext_block
         prev = block
-    try:
-        plaintext = unpad_pkcs7(plaintext)
-    except ValueError:
-        return None
-    return plaintext
+    return unpad_pkcs7(plaintext)
 
-def is_ecb_mode(ciphertext: bytes) -> bool:
+
+def is_ecb_mode(ciphertext):
     """
     (Shall) return True if ciphertext was encrypted in ECB mode.
     Works best on longer ciphertexts with several blocks.
     """
-    return misc.contains_duplicate(misc.split_into_blocks(ciphertext))
+    # return misc.contains_duplicate(misc.split_into_blocks(ciphertext))
+    if misc.contains_duplicate(misc.split_into_blocks(ciphertext)):
+        return 0
+    return 1
