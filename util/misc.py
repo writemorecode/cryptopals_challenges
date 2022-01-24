@@ -9,7 +9,7 @@ from operator import xor
 FREQUENCIES_PATH = "util\\english_letter_frequencies.json"
 TEXT_PATH = "data\\sherlock_holmes.txt"
 
-def count_set_bits(number: int) -> int:
+def count_set_bits(number):
     """ Returns the number of set bits in number """
     count = 0
     while number:
@@ -18,7 +18,7 @@ def count_set_bits(number: int) -> int:
     return count
 
 
-def hamming_distance(a: bytes, b: bytes) -> int:
+def hamming_distance(a, b):
     """
     Returns the Hamming distance (aka the edit distance)
     between a and b
@@ -31,7 +31,7 @@ def hamming_distance(a: bytes, b: bytes) -> int:
     return dist
 
 
-def split_into_blocks(data, size: int = 16) -> list:
+def split_into_blocks(data, size=16):
     """
     Splits data into equally-sized blocks of size bytes
     E.g. "ABCD" -> ["AB","CD"] for size=2.
@@ -39,7 +39,7 @@ def split_into_blocks(data, size: int = 16) -> list:
     return [data[i : i + size] for i in range(0, len(data), size)]
 
 
-def contains_duplicate(items) -> bool:
+def contains_duplicate(items):
     """ Returns True if items contains a duplicate (or more) element """
     counter = Counter(items)
     for freq in counter.values():
@@ -48,7 +48,7 @@ def contains_duplicate(items) -> bool:
     return False
 
 
-def transpose_blocks(blocks: list, block_len: int) -> list:
+def transpose_blocks(blocks, block_len):
     """
     Returns a transposition of the elements in items.
     E.g. ["AB","CD"] -> [["A", "C"], ["B", "D"]]
@@ -78,7 +78,7 @@ def create_english_frequency_map():
     return frequencies
 
 
-def get_data_score(data: list, freq: defaultdict) -> int:
+def get_data_score(data, freq):
     """
     Scores the bytes in data according the probability that it is English text.
     Used to detect correctly-decoded plaintexts
